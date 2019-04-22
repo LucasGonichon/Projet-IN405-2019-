@@ -1,6 +1,7 @@
 #ifndef AFFICHAGE_H
 #define AFFICHAGE_H
 
+#include <uvsqgraphics.h>
 #include <navalmap.h>
 #define TAILLE 50
 
