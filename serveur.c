@@ -21,12 +21,29 @@ int joueur(info inf, t_pipe pipe){
 		
 		//decision
 		int a=alea_int(2);
+		int b,c=0;
 		if (a==0){
 			act.action=ATK;
+			while(a+b<2||a+b>4){
+				a=alea_int(5);
+				b=alea_int(5);
+			}
 		}
 		else{
 			act.action=MOV;
+			b=10;
+			while(a+b>2||a+b==0){
+				a=alea_int(3);
+				b=alea_int(3);
+			}
 		}
+		c=alea_int(2);
+		if (c==1) a=-a;
+		c=alea_int(2);
+		if (c==1) b=-b;
+		
+		act.x=a;
+		act.y=b;
 		
 		//envoie au serv
 		mess[0]=act.action+'0';
@@ -82,7 +99,7 @@ int jeu(info inf){
 				actions[j].y=mess[2]-48;
 			}
 		for(j=0;j<inf.nbequipes;j++){
-			printf("%d\n",actions[j].action);
+			printf("%d__%d__%d\n",actions[j].action,actions[j].x,actions[j].y);
 		}
 		
 		}
