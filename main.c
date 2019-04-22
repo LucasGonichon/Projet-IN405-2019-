@@ -16,10 +16,12 @@ int main (int argc, char** argv) {
 	info inf; //il faudra faire la vrai avec un malloc
 	inf.nbjoueurs = 4;
 	inf.nbtour = 20;
+	inf.nbequipes = 3;
 
 	//lancer le jeu
 	int try=jeu(inf);
 
+	free_navalmap(map);
 	wait_escape();
     */
 
