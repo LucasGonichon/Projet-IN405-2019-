@@ -113,6 +113,7 @@ int jeu(info inf){
 			}
 
 		}
-		
+		free(actions);
 	}
+	free(pip);
 }

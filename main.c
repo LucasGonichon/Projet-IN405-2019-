@@ -23,6 +23,7 @@ int main (int argc, char** argv) {
 	//lancer le jeu
 	int try=jeu(inf);
 
+	free_navalmap(map);
 	wait_escape();
     exit(0);
 }
