@@ -5,47 +5,52 @@
 //2  ;  1  0  0  ;  1  0  0  ;  2  0 
 
 #include <navalmap.h>
+#include <mestypes.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+#include <fcntl.h>
 
-typedef struct {
-	navalmap_t navalmap;
-	int Cmax, Kmax, nbTours;
-} game_info;
+char * getInfo (int fd) {
 
-game_info lire_fichier(char* nomf){
+	char c;
+
+	read (fd, &c, sizeof(c));
+
+	if (c == ';')
+		return '\0';
 	
-	FILE * f = fopen (nomf, "r");
+	return strcat (&c,getInfo(fd));
+}
+
+game_info lire_fichier (char * nomf){
+	
+	int fd = open (nomf, O_RDONLY);
 
 	game_info res;
 
-	if (f != NULL) {
+	if (fd > 0) {
 
-		navalmap_t * navalmap;
+		char * map_type = getInfo (fd);
+		map_t type;
 
-		char * type_carte;
-		fscanf (f, "%s", type_carte);
+		if (strcmp (map_type, "rectangle") == 0)
+			type = MAP_RECT;
 
-		coord_t size;
-		fscanf (f, "%d %d", &size.x, &size.y);
+		res.navalmap.initEntityMap (&res.navalmap);
 
-		int nbShips;
-		fscanf (f, "%d", &nbShips);
+		coord_t coord = {atoi (getInfo (fd)), atoi (getInfo (fd))};
 
-		if (strcmp (type_carte, "rectangle") == 0)
-			navalmap = init_navalmap (MAP_RECT, size, nbShips);
+		res.navalmap = *init_navalmap (type, coord, atoi (getInfo (fd)));
 
-		else {
-			printf ("type de carte invalide");
-			exit (1);
-		}
+		placeRemainingShipsAtRandom (&res.navalmap);
 
-		fscanf (f, "%d %d %d", &res.Cmax, &res.Kmax, &res.nbTours);
+		res.Cmax = atoi (getInfo (fd));
+		res.Kmax = atoi (getInfo (fd));
+		res.nbTours = atoi (getInfo (fd));
 
-		res.navalmap = *navalmap;
-
-		fclose (f);
+		close (fd);
 	}
 
 	else {
