@@ -1,5 +1,5 @@
 test: all
-	./SoD
+	./SoD exemple.niveau
 
 all: main.o affichage.o
 	gcc -o SoD main.o affichage.o -I./navalmap/include -L./navalmap -lnm -luvsqgraphics `sdl-config --libs` -lm -lSDL_ttf
