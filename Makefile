@@ -14,7 +14,7 @@ lecture.o: lecture.c
 	gcc -Wall -c lecture.c -I./navalmap/include -L./navalmap
 
 serveur.o: serveur.c serveur.h
-	gcc -Wall -c serveur.c -I./navalmap/include -L./navalmap -lnm -lpthread
+	gcc -Wall -c `sdl-config --cflags` serveur.c -I./navalmap/include -L./navalmap -lnm -lpthread
 
 clean:
 	rm -f SoD *.o
