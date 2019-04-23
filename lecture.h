@@ -3,6 +3,6 @@
 
 char * getInfo (int);
 
-game_info lire_fichier (char *);
+info lire_fichier (char *);
 
 #endif

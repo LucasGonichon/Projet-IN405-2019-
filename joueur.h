@@ -3,20 +3,14 @@
 
 #include <navalmap.h>
 
-void attaque (coord_t, navalmap_t);
+void attaque (entityid_t, coord_t, navalmap_t);
 
-void bombardier (coord_t, navalmap_t);
+void charge (entityid_t, coordt_t, navalmap_t);
 
-void charge (coordt_t, navalmap_t);
+void deplacement (entityid_t, coord_t, navalmap_t);
 
-void deplacement (coord_t, navalmap_t);
+void radar (entityid_t, navalmap_t);
 
-void mine (coordt_t, navalmap_t);
-
-void radar (navalmap_t);
-
-void radarP (navalmap_t);
-
-void reparations (navalmap_t);
+void reparations (entityid_t, navalmap_t);
 
 #endif

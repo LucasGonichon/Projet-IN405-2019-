@@ -25,9 +25,9 @@ int main (int argc, char** argv) {
 	wait_escape();
     */
 
-    game_info jeu = lire_fichier ("exemple.niveau");
+    info jeu = lire_fichier ("exemple.niveau");
 
-    printf ("test : %d\n", jeu.Kmax);
+    printf ("test : %d\n", jeu.nbjoueurs);
 
     exit(0);
 }

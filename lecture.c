@@ -14,41 +14,52 @@
 
 char * getInfo (int fd) {
 
-	char c;
+	char * tmp;
+	char * res;
+	int i = 0;
 
-	read (fd, &c, sizeof(c));
-
-	if (c == ';')
-		return '\0';
+	if (read (fd, tmp, sizeof (char)) < 1)
+		return NULL;
 	
-	return strcat (&c,getInfo(fd));
+	while ( (*tmp == ' ') || (*tmp == '\n') )
+		if (read (fd, tmp, sizeof (char)) < 1)
+			return NULL;
+
+	while (1) {
+		res[i] = *tmp;
+
+		if (read (fd, tmp, sizeof ( char)) < 1)
+			return res;
+		
+		if ( (*tmp == ' ') || (*tmp == '\n') )
+			break;
+
+		i++;
+	}
+	return res;
 }
 
-game_info lire_fichier (char * nomf){
+info lire_fichier (char * nomf){
 	
 	int fd = open (nomf, O_RDONLY);
 
-	game_info res;
+	info res;
 
 	if (fd > 0) {
 
 		char * map_type = getInfo (fd);
-		map_t type;
 
 		if (strcmp (map_type, "rectangle") == 0)
-			type = MAP_RECT;
+			res.type = MAP_RECT;
 
-		res.navalmap.initEntityMap (&res.navalmap);
+		res.taille.x = atoi (getInfo (fd));
+		res.taille.y = atoi (getInfo (fd));
 
-		coord_t coord = {atoi (getInfo (fd)), atoi (getInfo (fd))};
+		res.nbjoueurs = atoi (getInfo (fd));
 
-		res.navalmap = *init_navalmap (type, coord, atoi (getInfo (fd)));
-
-		placeRemainingShipsAtRandom (&res.navalmap);
-
-		res.Cmax = atoi (getInfo (fd));
-		res.Kmax = atoi (getInfo (fd));
-		res.nbTours = atoi (getInfo (fd));
+		res.cmax = atoi (getInfo (fd));
+		res.cmax = atoi (getInfo (fd));
+		res.nbtour = atoi (getInfo (fd));
 
 		close (fd);
 	}
