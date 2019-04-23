@@ -29,8 +29,12 @@ void lire(char* nomf, int deb, int fin, char * chaine){
   char buf;
 
   fd=open(nomf, O_RDONLY);
+  
+  for(int i=0;i<deb;i++){
+    read(fd, &buf, sizeof(char));
+  }
 
-  for(int i=0;i<fin;i++){
+  for(int i=deb;i<fin;i++){
     read(fd, &buf, sizeof(char));
     if(i>=deb){
      chaine[i-deb]=buf;
@@ -80,41 +84,42 @@ info lire_fichier(char* nomf){
     inf.type=MAP_RECT;//tojours rectangle
     
    //On récupère la taille x de la carte
-  chaine=malloc(sizeof(char)*(tx));
+  chaine=malloc(sizeof(char)*(tx-type));
   lire(nomf, type+1, tx, chaine);
   inf.taille.x = atoi(chaine);
   free(chaine);
   
   //On récupère la taille y de la carte
-  chaine=malloc(sizeof(char)*(ty));
+  chaine=malloc(sizeof(char)*(ty-tx));
   lire(nomf, tx+1, ty, chaine);
   inf.taille.y = atoi(chaine);
   free(chaine);
   
   //On récupère le nommbre de joueurs
-  chaine=malloc(sizeof(char)*(nbj));
+  chaine=malloc(sizeof(char)*(nbj-ty));
   lire(nomf, ty+1, nbj, chaine);
   inf.nbequipes = atoi(chaine);
   free(chaine);
   
   //On récupère Cmax
-  chaine=malloc(sizeof(char)*(Cmax));
+  chaine=malloc(sizeof(char)*(Cmax-nbj));
   lire(nomf, nbj+1, Cmax, chaine);
   inf.cmax = atoi(chaine);
   free(chaine);
   
   //On récupère Kmax
-  chaine=malloc(sizeof(char)*(Kmax));
+  chaine=malloc(sizeof(char)*(Kmax-Cmax));
   lire(nomf, Cmax+1, Kmax, chaine);
   inf.kmax = atoi(chaine);
   free(chaine);
   
   //On récupère le nombre de tours
-  chaine=malloc(sizeof(char)*(longeur_fichier(nomf)));
+  chaine=malloc(sizeof(char)*(longeur_fichier(nomf)-Kmax));
   lire(nomf, Kmax+1, longeur_fichier(nomf), chaine);
   inf.nbtour = atoi(chaine);
   free(chaine);
   
   printf("%d,,%d,,%d,,%d",inf.taille.y,inf.taille.x,inf.cmax,inf.nbtour);
+  
   return inf;
 }
