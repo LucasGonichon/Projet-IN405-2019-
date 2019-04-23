@@ -106,7 +106,7 @@ int jeu(info inf){
 		
 		for(i=0;i<inf.nbequipes;i++){
 		//on ferme nbequipes processus
-		printf("wiat\n");
+		printf("wait\n");
 		if (wait(NULL) == -1) {
 				perror("wait :");
 				exit(EXIT_FAILURE);
