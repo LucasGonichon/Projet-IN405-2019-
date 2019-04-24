@@ -2,6 +2,8 @@
 #define MESTYPES_H
 
 #include <navalmap.h>
+#define ATK 1
+#define MOV 2
 
 typedef struct{ //structure qui est retournée par la kecture de fichier
 	map_t type;

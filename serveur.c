@@ -4,8 +4,6 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <uvsqgraphics.h>
-#define ATK 1
-#define MOV 2
 
 typedef struct {
     int cote[2];
