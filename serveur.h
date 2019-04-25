@@ -6,6 +6,6 @@
 #include <stdlib.h>
 #include <pthread.h>
 
-int jeu(info inf);
+int jeu(info inf);//fonction qui lance le serveur
 
 #endif
