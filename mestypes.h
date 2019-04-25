@@ -21,4 +21,10 @@ typedef struct{ //message envoyé par le serveur et les joueurs à travers les p
 	int y; //la modification en y qui sera fait
 }message;
 
+typedef struct{
+	navalmap_t * nmap;
+	int * shipK;
+	int * shipC;
+}jeu_t;
+
 #endif

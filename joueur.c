@@ -1,7 +1,7 @@
 #include <navalmap.h>
 #include <stdlib.h>
 #include <math.h>
-#include <mestypes.h>
+#include "mestypes.h"
 #include <math.h>
 
 /*
@@ -69,9 +69,9 @@ void reparations () {
 
 */
 
-jeu * init_jeu (navalmap_t * nmap, int Kmax, int Cmax) {
+jeu_t * init_jeu (navalmap_t * nmap, int Kmax, int Cmax) {
 
-    jeu * res = malloc (sizeof (jeu));
+    jeu_t * res = malloc (sizeof (nmap));
 
     res->nmap = nmap;
     res->shipK = malloc (nmap->nbShips * sizeof (int));
@@ -105,11 +105,12 @@ int isLinear (coord_t vect) {
     return 0;
 }
 
-void deplacement (jeu * jmap, int shipID, coord_t vect) {
-    if (checkRange (vect, 1, 2)) {
-        jmap->shipK[shipID] -= 2;
-        moveShip (jmap->nmap, shipID, vect);
-    }
+int isInBounds (coord_t pos, navalmap_t * nmap) {
+    if (pos.x < 0 || pos.x >= nmap->size.x)
+        return 0;
+    if (pos.y < 0 || pos.y >= nmap->size.y)
+        return 0;
+    return 1;
 }
 
 coord_t newPos (coord_t pos, coord_t vect) {
@@ -118,31 +119,48 @@ coord_t newPos (coord_t pos, coord_t vect) {
     return pos;
 }
 
-void attaque (jeu * jmap, int shipID, coord_t vect) {
-    if (checkRange (vect, 2, 4)) {
+void deplacement (jeu_t * jmap, int shipID, coord_t vect) {
+    if (checkRange (vect, 1, 2)) {
+        jmap->shipK[shipID] -= 2;
+        moveShip (jmap->nmap, shipID, vect);
+    }
+}
+
+void attaque (jeu_t * jmap, int shipID, coord_t vect) {
+    if (checkRange (vect, 2, 4) && isInBounds (newPos (jmap->nmap->shipPosition[shipID], vect), jmap->nmap)) {
         jmap->shipK[shipID] -= 5;
         int nbFoundShips = 0;
-        int * tmp = rect_getTargets (jmap->nmap, newPos (jmap->nmap->shipPosition[shipID], vect), 1, &nbFoundShips);
+        int * buff = malloc (jmap->nmap->size.x * jmap->nmap->size.y * sizeof (int));
+        buff = rect_getTargets (jmap->nmap, newPos (jmap->nmap->shipPosition[shipID], vect), 1, &nbFoundShips);
         int * listID = malloc (nbFoundShips * sizeof (int));
-        listID = tmp;
+
+        for (int i = 0; i < nbFoundShips; i++) {
+            listID[i] = buff[i];
+        }
+
+        free (buff);
 
         if (listID != NULL)
             for (int i = 0; i < nbFoundShips; i++) {
                 jmap->shipC[listID[i]] -= 20;
             }
+        
+        free (listID);
 
-        int * IDcentre;
+        int * IDcentre = malloc (sizeof (int));
         IDcentre = rect_getTargets (jmap->nmap, newPos (jmap->nmap->shipPosition[shipID], vect), 0, &nbFoundShips);
         
         if (IDcentre != NULL)
             jmap->shipC[*IDcentre] -= 20;
+
+        free (IDcentre);
     }
 }
 
-void charge (jeu * jmap, int shipID, coord_t vect) {
-    if (checkRange (vect, 4, 5) || isLinear (vect)) {
+void charge (jeu_t * jmap, int shipID, coord_t vect) {
+    if (checkRange (vect, 4, 5) && isLinear (vect) && isInBounds (newPos (jmap->nmap->shipPosition[shipID], vect), jmap->nmap)) {
         //On applique les dégats sur la case touchée et sur l'attaquant
-        int * IDcentre;
+        int * IDcentre = malloc (sizeof (int));
         int foundShips = 0;
         IDcentre = rect_getTargets (jmap->nmap, newPos (jmap->nmap->shipPosition[shipID], vect), 0, &foundShips);
         
@@ -150,6 +168,7 @@ void charge (jeu * jmap, int shipID, coord_t vect) {
             jmap->shipC[*IDcentre] -= 50;
             jmap->shipC[shipID] -= 5;
         }
+        free (IDcentre);
 
         //Le bateau s'arrete une case avant la case touchée
         jmap->shipK[shipID] -= 3;
@@ -162,7 +181,7 @@ void charge (jeu * jmap, int shipID, coord_t vect) {
     }
 }
 
-int radar (jeu * jmap, int shipID) {
+int radar (jeu_t * jmap, int shipID) {
     jmap->shipK[shipID] -= 3;
     int nbFoundShips = 0;
     int * listID = rect_getTargets (jmap->nmap, jmap->nmap->shipPosition[shipID], fmax (jmap->nmap->size.x, jmap->nmap->size.y), &nbFoundShips);
@@ -171,7 +190,7 @@ int radar (jeu * jmap, int shipID) {
     return -1;
 }
 
-void reparations (jeu * jmap, int shipID) {
+void reparations (jeu_t * jmap, int shipID) {
     jmap->shipC[shipID] =+ 25;
     jmap->shipK[shipID] -= 20;
 }

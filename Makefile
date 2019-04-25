@@ -2,7 +2,7 @@ test: all
 	./SoD exemple.niveau
 
 all: main.o affichage.o serveur.o lecture.o joueur.o
-	gcc -o SoD main.o affichage.o serveur.o lecture.o -I./navalmap/include -L./navalmap -lnm -luvsqgraphics `sdl-config --libs` -lm -lSDL_ttf -lpthread
+	gcc -o SoD main.o affichage.o serveur.o lecture.o joueur.o -I./navalmap/include -L./navalmap -lnm -luvsqgraphics `sdl-config --libs` -lm -lSDL_ttf -lpthread
 
 main.o: main.c affichage.h serveur.h lecture.h mestypes.h
 	gcc -Wall -c `sdl-config --cflags` main.c -I./navalmap/include -L./navalmap -lnm

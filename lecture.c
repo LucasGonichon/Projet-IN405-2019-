@@ -5,7 +5,7 @@
 //2  ;  1  0  0  ;  1  0  0  ;  2  0 
 
 #include <navalmap.h>
-#include <mestypes.h>
+#include "mestypes.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
