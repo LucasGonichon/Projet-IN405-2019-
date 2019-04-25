@@ -5,7 +5,6 @@
 #include "mestypes.h"
 
 int main (int argc, char** argv) {
-/*
     navalmap_t * map;
     
     if (argc==2) {
@@ -36,25 +35,6 @@ int main (int argc, char** argv) {
     info jeu = lire_fichier ("exemple.niveau");
 
     printf ("test : %d\n", jeu.nbjoueurs);
-
-	*/
-
-	coord_t size;
-	size.x = size.y = 5;
-	navalmap_t * nmap = init_navalmap (MAP_RECT, size, 3);
-	placeRemainingShipsAtRandom (nmap);
-
-	jeu_t * jmap = init_jeu (nmap, 100, 100);
-
-	coord_t vect;
-	vect.x = vect.y = 2;
-	deplacement (jmap, 2, vect);
-	attaque (jmap, 1, vect);
-	charge (jmap, 0, vect);
-
-	printf ("bateau 0 .kerozene = %d\n", jmap->shipK[0]);
-	printf ("bateau 1 .kerozene = %d\n", jmap->shipK[1]);
-	printf ("bateau 2 .kerozene = %d\n", jmap->shipK[2]);
 
     exit(0);
 }

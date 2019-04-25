@@ -8,6 +8,9 @@
 // renvoie la carte de jeu initialisée
 jeu_t * init_jeu (navalmap_t *, int, int);
 
+// Libération de la mémoire de jeu
+void free_jeu (jeu_t *);
+
 // Vérifie que le vecteur est bien compris dans la portée
 // renvoie 0 si non, 1 si oui
 int checkRange (coord_t, int, int);

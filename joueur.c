@@ -85,6 +85,13 @@ jeu_t * init_jeu (navalmap_t * nmap, int Kmax, int Cmax) {
     return res;
 }
 
+void free_jeu (jeu_t * jmap) {
+    free_navalmap (jmap->nmap);
+    free (jmap->shipC);
+    free (jmap->shipK);
+    free (jmap);
+}
+
 int checkRange (coord_t vect, int min, int max) {
     if (vect.x < min)
         return 0;
