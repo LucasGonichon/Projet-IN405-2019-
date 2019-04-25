@@ -5,12 +5,12 @@
 #include <sys/wait.h>
 #include <uvsqgraphics.h>
 
-typedef struct {
+typedef struct {//structure des pipe
     int cote[2];
 } t_pipe;
 
 
-int joueur(info inf, t_pipe pipe){
+int joueur(info inf, t_pipe pipe){//fonction de chaque joueur(fork)
 	int j;
 	message act;
 	close(pipe.cote[0]);
@@ -52,7 +52,7 @@ int joueur(info inf, t_pipe pipe){
 	
 }
 
-int jeu(info inf){
+int jeu(info inf){//focntion du serveur
 	int i,j;
 	pid_t pid = 1;
 	t_pipe* pip=malloc(sizeof(t_pipe)*inf.nbequipes);
@@ -97,8 +97,7 @@ int jeu(info inf){
 				actions[j].y=mess[2]-48;
 			}
 		for(j=0;j<inf.nbequipes;j++){
-			printf("%d__%d__%d\n",actions[j].action,actions[j].x,actions[j].y);
-		}
+		//appel la fonction qui interprète les messages
 		
 		}
 		
