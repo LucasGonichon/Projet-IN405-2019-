@@ -13,7 +13,7 @@ affichage.o: affichage.c affichage.h
 lecture.o: lecture.c mestypes.h
 	gcc -Wall -c lecture.c -I./navalmap/include -L./navalmap
 
-serveur.o: serveur.c serveur.h mestypes.h
+serveur.o: serveur.c serveur.h mestypes.h joueur.h
 	gcc -Wall -c `sdl-config --cflags` serveur.c -I./navalmap/include -L./navalmap -lnm -lpthread
 
 joueur.o: joueur.c joueur.h mestypes.h

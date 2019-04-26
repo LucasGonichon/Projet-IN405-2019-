@@ -27,6 +27,9 @@ int isInBounds (coord_t, navalmap_t *);
 // retourne la nouvelle coordonnée
 coord_t newPos (coord_t, coord_t);
 
+// Transforme un message en action
+void doMessage (jeu_t *, int, message);
+
 // Deplace un bateau d'un vecteur vect
 void deplacement (jeu_t *, int, coord_t);
 

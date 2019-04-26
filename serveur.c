@@ -1,21 +1,18 @@
 #include "serveur.h"
+#include "joueur.h"
 #include <unistd.h>
+#include <stdio.h>
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <uvsqgraphics.h>
 
-typedef struct {//structure des pipe
-    int cote[2];
-} t_pipe;
-
-
-int joueur(info inf, t_pipe pipe){//fonction de chaque joueur(fork)
+int joueur(int nbTours, t_pipe pipe){//fonction de chaque joueur(fork)
 	int j;
 	message act;
 	close(pipe.cote[0]);
 	char mess[3];
-	for(j=0;j<inf.nbtour;j++){
+	for(j=0;j<nbTours;j++){
 		
 		//decision
 		int a=alea_int(2);
@@ -52,12 +49,12 @@ int joueur(info inf, t_pipe pipe){//fonction de chaque joueur(fork)
 	
 }
 
-int jeu(info inf){//focntion du serveur
+int jeu(jeu_t * jmap, int nbTours){//focntion du serveur
 	int i,j;
 	pid_t pid = 1;
-	t_pipe* pip=malloc(sizeof(t_pipe)*inf.nbequipes);
+	t_pipe * pip = malloc(sizeof(t_pipe) * jmap->nmap->nbShips);
 	
-	for(i=0;i<inf.nbequipes && pid>0;i++){
+	for(i=0;i<jmap->nmap->nbShips && pid>0;i++){
 		//on créé les pipe
 		pipe(pip[i].cote);
 		
@@ -71,37 +68,36 @@ int jeu(info inf){//focntion du serveur
 	printf("%d\n",(int)pid);
 	
 	if(pid==0){
-		int T=joueur(inf, pip[i-1]);
+		int T=joueur(nbTours, pip[i-1]);
 		
 		exit(0);
 	}
 	
 	if (pid>0){ //si père
 		
-		for(i=0; i<inf.nbequipes;i++){//on ferme les entree ecriture
+		for(i=0; i<jmap->nmap->nbShips;i++)		//on ferme les entree ecriture
 			close(pip[i].cote[1]);
-			
-		}
 		
 		
 		//gère les tours
-		message * actions= malloc(sizeof(message)*inf.nbequipes);
+		message * actions= malloc(sizeof(message)*jmap->nmap->nbShips);
 		char mess[3];
-		for(i=0;i<inf.nbtour;i++){
+		for(i=0;i<nbTours;i++){
 			
-			for(j=0;j<inf.nbequipes;j++){
+			for(j=0;j<jmap->nmap->nbShips;j++){
 				//recoit les infos des processus
 				read(pip[j].cote[0],mess,sizeof(char)*3);
 				actions[j].action=mess[0]-48;
 				actions[j].x=mess[1]-48;
 				actions[j].y=mess[2]-48;
 			}
-		for(j=0;j<inf.nbequipes;j++){
-		//appel la fonction qui interprète les messages
-		
+
+			for(j=0;j<jmap->nmap->nbShips;j++){
+				doMessage (jmap, j, actions[j]);
+			}
 		}
 		
-		for(i=0;i<inf.nbequipes;i++){
+		for(i=0;i<jmap->nmap->nbShips;i++){
 		//on ferme nbequipes processus
 		printf("wait\n");
 		if (wait(NULL) == -1) {

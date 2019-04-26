@@ -6,6 +6,7 @@
 
 #include <navalmap.h>
 #include "mestypes.h"
+#include "joueur.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -14,67 +15,32 @@
 #include <sys/types.h> 
 #include <sys/stat.h>
 
-/*
+
 char * getInfo (int fd) {
 
-	char * tmp;
-	char * res;
-	int i = 0;
+  char * tmp = malloc (sizeof (char));
+  char * res = malloc (sizeof (char));
+  int wordSize = 1;
 
-	if (read (fd, tmp, sizeof (char)) < 1)
-		return NULL;
-	
-	while ( (*tmp == ' ') || (*tmp == '\n') )
-		if (read (fd, tmp, sizeof (char)) < 1)
-			return NULL;
+  while (1) {
+      read (fd, tmp, sizeof (char));
 
-	while (1) {
-		res[i] = *tmp;
+      if (tmp[0] == ";" || tmp[0] == " ") break;
 
-		if (read (fd, tmp, sizeof ( char)) < 1)
-			return res;
-		
-		if ( (*tmp == ' ') || (*tmp == '\n') )
-			break;
+      res = realloc (res, sizeof (char) * wordSize);
+      res[wordSize-1] = tmp[0];
+      wordSize++;
+  }
 
-		i++;
-	}
-	return res;
+  free (tmp);
+  return res;
 }
 
-info lire_fichier (char * nomf){
-	
-	int fd = open (nomf, O_RDONLY);
-
-	info res;
-
-	if (fd > 0) {
-
-		char * map_type = getInfo (fd);
-
-		if (strcmp (map_type, "rectangle") == 0)
-			res.type = MAP_RECT;
-
-		res.taille.x = atoi (getInfo (fd));
-		res.taille.y = atoi (getInfo (fd));
-
-		res.nbjoueurs = atoi (getInfo (fd));
-
-		res.cmax = atoi (getInfo (fd));
-		res.cmax = atoi (getInfo (fd));
-		res.nbtour = atoi (getInfo (fd));
-
-		close (fd);
-	}
-
-	else {
-		printf ("échec du chargement du niveau : %s", nomf);
-		exit (1);
-	}
-
-	return res;
+jeu_t * lire_fichier (int fd, int * nbTours) {
+  getInfo (fd);
 }
-*/
+
+/*
 
 int longeur_fichier(char* nomf){
   int taille;
@@ -105,11 +71,11 @@ void lire(char* nomf, int deb, int fin, char * chaine){
   close(fd);
 }
 
-info lire_fichier(char* nomf){
+jeu_t * lire_fichier(char* nomf, int * nbtour){
 	int fd, type,tx,ty, nbj, Cmax, Kmax, conteur;
   char buf;
   char * chaine;
-  info inf;
+  jeu_t * res = NULL;
 
   fd=open(nomf, O_RDONLY);
   
@@ -142,46 +108,58 @@ info lire_fichier(char* nomf){
     
   close(fd);
   
+
   //on remplie inf
-    inf.type=MAP_RECT;//tojours rectangle
-    
-   //On récupère la taille x de la carte
+  map_t mtype = MAP_RECT;
+  
+  coord_t size;
+  //On récupère la taille x de la carte
   chaine=malloc(sizeof(char)*(tx-type));
   lire(nomf, type+1, tx, chaine);
-  inf.taille.x = atoi(chaine);
+  size.x = atoi(chaine);
   free(chaine);
   
   //On récupère la taille y de la carte
   chaine=malloc(sizeof(char)*(ty-tx));
   lire(nomf, tx+1, ty, chaine);
-  inf.taille.y = atoi(chaine);
+  size.y = atoi(chaine);
   free(chaine);
   
+  int nbEquipes = 0;
   //On récupère le nommbre de joueurs
   chaine=malloc(sizeof(char)*(nbj-ty));
   lire(nomf, ty+1, nbj, chaine);
-  inf.nbequipes = atoi(chaine);
+  nbEquipes = atoi(chaine);
   free(chaine);
   
+  int Cm = 0;
   //On récupère Cmax
   chaine=malloc(sizeof(char)*(Cmax-nbj));
   lire(nomf, nbj+1, Cmax, chaine);
-  inf.cmax = atoi(chaine);
+  Cm = atoi(chaine);
   free(chaine);
   
+  int Km = 0;
   //On récupère Kmax
   chaine=malloc(sizeof(char)*(Kmax-Cmax));
   lire(nomf, Cmax+1, Kmax, chaine);
-  inf.kmax = atoi(chaine);
+  Km = atoi(chaine);
   free(chaine);
   
   //On récupère le nombre de tours
   chaine=malloc(sizeof(char)*(longeur_fichier(nomf)-Kmax));
   lire(nomf, Kmax+1, longeur_fichier(nomf), chaine);
-  inf.nbtour = atoi(chaine);
+  *nbtour = atoi(chaine);
   free(chaine);
+
+  navalmap_t * nmap = NULL;
+
+  nmap = init_navalmap (mtype, size, nbEquipes);
+  placeRemainingShipsAtRandom (nmap);
+
+  res = init_jeu (nmap, Km, Cm);
   
-  printf("%d,,%d,,%d,,%d",inf.taille.y,inf.taille.x,inf.cmax,inf.nbtour);
-  
-  return inf;
+  return res;
 }
+
+*/

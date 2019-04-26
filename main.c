@@ -5,36 +5,26 @@
 #include "mestypes.h"
 
 int main (int argc, char** argv) {
-    navalmap_t * map;
-    
-    if (argc==2) {
-		printf("on ouvre me fichier");
-		info inf=lire_fichier(argv[1]);
+
+	if (argc != 2) {
+		printf ("erreur de commande !");
+		exit (1);
 	}
-	else exit(2);
-    
-    coord_t mapsize = {10,10};
-    map = init_navalmap (MAP_RECT,mapsize,2);
-    init_graphics(TAILLE*map->size.x,TAILLE*map->size.x);
+
+	int * nbTours = malloc (sizeof (int));
+	jeu_t * jmap = lire_fichier (argv[1], nbTours);
+/*
+    init_graphics(TAILLE * jmap->nmap->size.x, TAILLE * jmap->nmap->size.y);
     affiche_auto_off();
-    affiche_map (map);
+    affiche_map (jmap->nmap);
     affiche_all();
 
-	//strucutre temporaire en attendant la lecture de fichier
-	info inf; //il faudra faire la vrai avec un malloc
-	inf.nbjoueurs = 4;
-	inf.nbtour = 20;
-	inf.nbequipes = 3;
-
 	//lancer le jeu
-	int try=jeu(inf);
+	int try = jeu(jmap, *nbTours);
 
-	free_navalmap(map);
 	wait_escape();
 
-    info jeu = lire_fichier ("exemple.niveau");
-
-    printf ("test : %d\n", jeu.nbjoueurs);
-
+	free_jeu (jmap);
+*/
     exit(0);
 }

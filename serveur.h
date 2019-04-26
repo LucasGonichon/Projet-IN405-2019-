@@ -5,7 +5,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
-int jeu(info inf);//fonction qui lance le serveur
+typedef struct {//structure des pipe
+    int cote[2];
+} t_pipe;
+
+int joueur (int, t_pipe);
+
+int jeu(jeu_t *, int);//fonction qui lance le serveur
 
 #endif

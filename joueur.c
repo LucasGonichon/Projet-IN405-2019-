@@ -2,7 +2,9 @@
 #include <stdlib.h>
 #include <math.h>
 #include "mestypes.h"
+#include "joueur.h"
 #include <math.h>
+#include <stdio.h>
 
 /*
 //navire : nmap->map [nmap->shipPosition [shipID] .y][nmap->shipPosition [shipID] .x]
@@ -126,6 +128,20 @@ coord_t newPos (coord_t pos, coord_t vect) {
     return pos;
 }
 
+void doMessage (jeu_t * jmap, int shipID, message order) {
+    coord_t vect;
+    vect.x = order.x;
+    vect.y = order.y;
+    switch (order.action) {
+        case ATK:
+            attaque (jmap, shipID, vect);
+        case MOV:
+            deplacement (jmap, shipID, vect);
+        default:
+            printf ("Le bateau %d ne fait rien !\n", shipID);
+    }
+}
+
 void deplacement (jeu_t * jmap, int shipID, coord_t vect) {
     if (checkRange (vect, 1, 2)) {
         jmap->shipK[shipID] -= 2;
@@ -198,6 +214,8 @@ int radar (jeu_t * jmap, int shipID) {
 }
 
 void reparations (jeu_t * jmap, int shipID) {
-    jmap->shipC[shipID] =+ 25;
-    jmap->shipK[shipID] -= 20;
+    if (jmap->shipK[shipID] >= 20) {
+        jmap->shipC[shipID] =+ 25;
+        jmap->shipK[shipID] -= 20;
+    }
 }
