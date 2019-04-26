@@ -46,7 +46,7 @@ jeu_t * lire_fichier (char * nomf, int * nbTours) {
     perror ("erreur d'ouverture");
 
   else {
-    // On récupère les infos
+    // On récupère les infos (8 infos, car on ignore la 4e (tmp[3]), qui est vide)
     for (int i = 0; i < 8; i++) {
       tmp[i] = malloc (sizeof (char) * 10);
       tmp[i] = getInfo (fd);
