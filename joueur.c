@@ -132,13 +132,14 @@ void doMessage (jeu_t * jmap, int shipID, message order) {
     coord_t vect;
     vect.x = order.x;
     vect.y = order.y;
-    switch (order.action) {
-        case ATK:
-            attaque (jmap, shipID, vect);
-        case MOV:
-            deplacement (jmap, shipID, vect);
-        default:
-            printf ("Le bateau %d ne fait rien !\n", shipID);
+    if (order.action == ATK) {
+        attaque (jmap, shipID, vect);
+        printf ("Le bateau %d tir vers %d %d\n", shipID, vect.x, vect.y);
+    }else if (order.action == MOV) {
+        deplacement (jmap, shipID, vect);
+        printf ("Le bateau %d se déplace vers %d %d\n", shipID, vect.x, vect.y);
+    }else {
+        printf ("Le bateau %d ne fait rien !\n", shipID);
     }
 }
 

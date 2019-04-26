@@ -18,148 +18,63 @@
 
 char * getInfo (int fd) {
 
-  char * tmp = malloc (sizeof (char));
+  char tmp;
   char * res = malloc (sizeof (char));
   int wordSize = 1;
 
-  while (1) {
-      read (fd, tmp, sizeof (char));
+  while (read (fd, &tmp, sizeof (char)) > 0) {
 
-      if (tmp[0] == ";" || tmp[0] == " ") break;
+      if (tmp == ';' || tmp == ' ' || tmp == '\n')
+        return res;
 
       res = realloc (res, sizeof (char) * wordSize);
-      res[wordSize-1] = tmp[0];
+      res[wordSize-1] = tmp;
       wordSize++;
   }
 
+  return res;
+}
+
+jeu_t * lire_fichier (char * nomf, int * nbTours) {
+
+  // alloc et open
+  char ** tmp = malloc (sizeof (char *) * 7);
+
+  int fd = open (nomf, O_RDONLY);
+
+  if (fd < 0)
+    perror ("erreur d'ouverture");
+
+  else {
+    // On récupère les infos
+    for (int i = 0; i < 8; i++) {
+      tmp[i] = malloc (sizeof (char) * 10);
+      tmp[i] = getInfo (fd);
+        printf ("%d : %d\n", i, atoi (tmp[i]));
+    }
+
+    // init nmap
+    coord_t size;
+    size.x = atoi (tmp[1]);
+    size.y = atoi (tmp[2]);
+    navalmap_t * nmap = init_navalmap (MAP_RECT, size, atoi (tmp[4]));
+    placeRemainingShipsAtRandom (nmap);
+
+    // init jmap
+    jeu_t * jmap = init_jeu (nmap, atoi (tmp[6]), atoi (tmp[5]));
+    nbTours[0] = atoi (tmp[7]);
+
+    // free et close
+    for (int i = 0; i < 10; i++) {
+      free (tmp[i]);
+    }
+    free (tmp);
+    close (fd);
+
+    // On return la jmap
+    return jmap;
+  }
+
   free (tmp);
-  return res;
+  return NULL;
 }
-
-jeu_t * lire_fichier (int fd, int * nbTours) {
-  getInfo (fd);
-}
-
-/*
-
-int longeur_fichier(char* nomf){
-  int taille;
-  struct stat etat;
-  stat(nomf, &etat);
-  taille = (int)etat.st_size;
-  return taille;
-}
-
-// lire les charactères de début à fin
-void lire(char* nomf, int deb, int fin, char * chaine){
-  //Ouverture
-  int fd;
-  char buf;
-
-  fd=open(nomf, O_RDONLY);
-  
-  for(int i=0;i<deb;i++){
-    read(fd, &buf, sizeof(char));
-  }
-
-  for(int i=deb;i<fin;i++){
-    read(fd, &buf, sizeof(char));
-    if(i>=deb){
-     chaine[i-deb]=buf;
-    }
-  }
-  close(fd);
-}
-
-jeu_t * lire_fichier(char* nomf, int * nbtour){
-	int fd, type,tx,ty, nbj, Cmax, Kmax, conteur;
-  char buf;
-  char * chaine;
-  jeu_t * res = NULL;
-
-  fd=open(nomf, O_RDONLY);
-  
-  for(int l=0;l<longeur_fichier(nomf);++l){
-    read(fd, &buf, sizeof(char));
-    if(buf==';' || buf=='\n'){
-      conteur++;
-        switch (conteur) {
-        case 1:
-          type=l;
-			break;
-        case 2:
-          tx=l;
-			break;
-        case 3:
-          ty=l;
-			break;
-        case 4:
-          nbj=l;
-			break;
-        case 5:
-          Cmax=l;
-			break;
-        case 6:
-          Kmax=l;
-			break;
-		}
-      }
-    }
-    
-  close(fd);
-  
-
-  //on remplie inf
-  map_t mtype = MAP_RECT;
-  
-  coord_t size;
-  //On récupère la taille x de la carte
-  chaine=malloc(sizeof(char)*(tx-type));
-  lire(nomf, type+1, tx, chaine);
-  size.x = atoi(chaine);
-  free(chaine);
-  
-  //On récupère la taille y de la carte
-  chaine=malloc(sizeof(char)*(ty-tx));
-  lire(nomf, tx+1, ty, chaine);
-  size.y = atoi(chaine);
-  free(chaine);
-  
-  int nbEquipes = 0;
-  //On récupère le nommbre de joueurs
-  chaine=malloc(sizeof(char)*(nbj-ty));
-  lire(nomf, ty+1, nbj, chaine);
-  nbEquipes = atoi(chaine);
-  free(chaine);
-  
-  int Cm = 0;
-  //On récupère Cmax
-  chaine=malloc(sizeof(char)*(Cmax-nbj));
-  lire(nomf, nbj+1, Cmax, chaine);
-  Cm = atoi(chaine);
-  free(chaine);
-  
-  int Km = 0;
-  //On récupère Kmax
-  chaine=malloc(sizeof(char)*(Kmax-Cmax));
-  lire(nomf, Cmax+1, Kmax, chaine);
-  Km = atoi(chaine);
-  free(chaine);
-  
-  //On récupère le nombre de tours
-  chaine=malloc(sizeof(char)*(longeur_fichier(nomf)-Kmax));
-  lire(nomf, Kmax+1, longeur_fichier(nomf), chaine);
-  *nbtour = atoi(chaine);
-  free(chaine);
-
-  navalmap_t * nmap = NULL;
-
-  nmap = init_navalmap (mtype, size, nbEquipes);
-  placeRemainingShipsAtRandom (nmap);
-
-  res = init_jeu (nmap, Km, Cm);
-  
-  return res;
-}
-
-*/
